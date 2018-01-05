@@ -5,9 +5,9 @@
 
 using CppAD::AD;
 
-// TODO: Set the timestep length and duration
-size_t N = 0;
-double dt = 0;
+// Set the timestep length and duration
+size_t N = 25;
+double dt = 0.05;  //seconds
 
 // This value assumes the model presented in the classroom is used.
 //
@@ -22,6 +22,14 @@ double dt = 0;
 const double Lf = 2.67;
 
 class FG_eval {
+ private:
+  int v_start = N * 3;
+  int cte_start = N * 4;
+  int epsi_start = N * 5;
+  int delta_start = N * 6;
+  int a_start = (N * 7) - 1;
+  int ref_v = 35;  // mph
+
  public:
   // Fitted polynomial coefficients
   Eigen::VectorXd coeffs;
@@ -29,10 +37,29 @@ class FG_eval {
 
   typedef CPPAD_TESTVECTOR(AD<double>) ADvector;
   void operator()(ADvector& fg, const ADvector& vars) {
-    // TODO: implement MPC
     // `fg` a vector of the cost constraints, `vars` is a vector of variable values (state & actuators)
     // NOTE: You'll probably go back and forth between this function and
     // the Solver function below.
+    fg[0] = 0;
+
+    // The part of the cost based on the reference state.
+    for (int t = 0; t < N; t++) {
+      fg[0] += CppAD::pow(vars[cte_start + t], 2);
+      fg[0] += CppAD::pow(vars[epsi_start + t], 2);
+      fg[0] += CppAD::pow(vars[v_start + t] - ref_v, 2);
+    }
+
+    // Minimize the use of actuators.
+    for (int t = 0; t < N - 1; t++) {
+      fg[0] += CppAD::pow(vars[delta_start + t], 2);
+      fg[0] += CppAD::pow(vars[a_start + t], 2);
+    }
+
+    // Minimize the value gap between sequential actuations.
+    for (int t = 0; t < N - 2; t++) {
+      fg[0] += 500 * CppAD::pow(vars[delta_start + t + 1] - vars[delta_start + t], 2);
+      fg[0] += CppAD::pow(vars[a_start + t + 1] - vars[a_start + t], 2);
+    }
   }
 };
 
@@ -47,14 +74,14 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
   size_t i;
   typedef CPPAD_TESTVECTOR(double) Dvector;
 
-  // TODO: Set the number of model variables (includes both states and inputs).
+  // Set the number of model variables (includes both states and inputs).
   // For example: If the state is a 4 element vector, the actuators is a 2
   // element vector and there are 10 timesteps. The number of variables is:
   //
   // 4 * 10 + 2 * 9
-  size_t n_vars = 0;
-  // TODO: Set the number of constraints
-  size_t n_constraints = 0;
+  size_t n_vars = state.size() * N + 2 * (state.size() + 1);
+  // Set the number of constraints
+  size_t n_constraints = 2;  // steering angle and throttle
 
   // Initial value of the independent variables.
   // SHOULD BE 0 besides initial state.
