@@ -79,7 +79,7 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
   // element vector and there are 10 timesteps. The number of variables is:
   //
   // 4 * 10 + 2 * 9
-  size_t n_vars = state.size() * N + 2 * (state.size() - 1);
+  size_t n_vars = state.size() * N + 2 * (N - 1);
   // Set the number of constraints
   size_t n_constraints = 2;  // steering angle and throttle
 
