@@ -1,6 +1,9 @@
 # CarND-Controls-MPC
 Self-Driving Car Engineer Nanodegree Program
 
+## References
+[Self-Driving Car Project Q&A | MPC Controller](https://www.youtube.com/watch?list=PLAwxTw4SYaPnfR7TzRZN-uxlxGbqxhtm2&time_continue=267&v=bOQuhpz3YfU), Udacity
+
 ---
 
 ## Dependencies
