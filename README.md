@@ -1,5 +1,7 @@
 # CarND-Controls-MPC
-Self-Driving Car Engineer Nanodegree Program
+Self-Driving Car Engineer Nanodegree Program Project 5 term 2 solution by Steven Eisinger
+Rubric answers can be found [here](rubric_answers.md)
+
 
 ## References
 [Self-Driving Car Project Q&A | MPC Controller](https://www.youtube.com/watch?list=PLAwxTw4SYaPnfR7TzRZN-uxlxGbqxhtm2&time_continue=267&v=bOQuhpz3YfU), Udacity
