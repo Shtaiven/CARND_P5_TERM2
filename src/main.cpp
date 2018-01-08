@@ -98,7 +98,7 @@ int main() {
           * Both are in between [-1, 1].
           *
           */
-          for (int i = 0; i < ptsx.size(); i++) {
+          for (size_t i = 0; i < ptsx.size(); i++) {
             // shift car reference angle to 90 degrees
             double shift_x = ptsx[i]-px;
             double shift_y = ptsy[i]-py;
@@ -119,13 +119,20 @@ int main() {
           double cte = polyeval(coeffs, 0);
           double epsi = -atan(coeffs[1]);  // works because we shifted angle and origin to 0
 
-          // TODO: Estimate future state in 100 ms
           // current state
           double steer_value = j[1]["steering_angle"];
           double throttle_value = j[1]["throttle"];
 
+          // TODO: Estimate future state in 100 ms
+          double calc_v = v * 0.1 + 0.5 * throttle_value * pow(0.1, 2);
+          double future_x = cos(steer_value) * calc_v;
+          double future_y = sin(steer_value) * calc_v;
+          double future_psi = 0;
+          double future_v = v + throttle_value * 0.1;  // using throttle as an estimation of acceleration
+
           Eigen::VectorXd state(6);
-          state << 0, 0, 0, v, cte, epsi;
+          state << future_x, future_y, future_psi, future_v, cte, epsi;
+          //state << 0, 0, 0, v, cte, epsi;
 
           auto vars = mpc.Solve(state, coeffs);
 
@@ -142,7 +149,7 @@ int main() {
           vector<double> mpc_x_vals;
           vector<double> mpc_y_vals;
 
-          for (int i = 2; i < vars.size(); i++) {
+          for (size_t i = 2; i < vars.size(); i++) {
             if (i % 2 == 0) {
               mpc_x_vals.push_back(vars[i]);
             } else {
