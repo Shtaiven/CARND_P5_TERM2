@@ -123,15 +123,19 @@ int main() {
           double steer_value = j[1]["steering_angle"];
           double throttle_value = j[1]["throttle"];
 
-          // TODO: Estimate future state in 100 ms
-          double calc_v = v * 0.1 + 0.5 * throttle_value * pow(0.1, 2);
-          double future_x = cos(steer_value) * calc_v;
-          double future_y = sin(steer_value) * calc_v;
-          double future_psi = 0;
-          double future_v = v + throttle_value * 0.1;  // using throttle as an estimation of acceleration
+          double latency = 0.1;
+          double Lf = 2.67;
+
+          // Estimate future state
+          double future_x = v * cos(steer_value) * latency;
+          double future_y = v * sin(steer_value) * latency;
+          double future_psi = v * steer_value * latency / Lf;
+          v += throttle_value * latency;  // using throttle as an estimation of acceleration
+          cte += v * sin(epsi) * latency;
+          epsi += v * epsi * latency / Lf;
 
           Eigen::VectorXd state(6);
-          state << future_x, future_y, future_psi, future_v, cte, epsi;
+          state << future_x, future_y, future_psi, v, cte, epsi;
           //state << 0, 0, 0, v, cte, epsi;
 
           auto vars = mpc.Solve(state, coeffs);
@@ -156,8 +160,6 @@ int main() {
               mpc_y_vals.push_back(vars[i]);
             }
           }
-
-          double Lf = 2.67;
 
           json msgJson;
           // NOTE: Remember to divide by deg2rad(25) before you send the steering value back.
