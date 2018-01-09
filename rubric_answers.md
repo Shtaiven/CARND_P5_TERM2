@@ -4,7 +4,7 @@ By Steven Eisinger
 
 ## The Model
 
-The model being used here is the bicycle model seen from the Vehicle Models lesson. The following steps are taken:
+The model being used here is the global kinematic model seen from the Vehicle Models lesson. The following steps are taken:
 
 1. The current state is retrieved from the simulator
 1. The retrieved coordinates are transformed such that the car is placed at the origin
@@ -38,7 +38,7 @@ for (size_t t = 0; t < N - 2; t++) {
 
 The reference velocity `ref_v` was chosen to be 100 mph so that the car attempts to go quite fast. In reality, the weights above result in the car going at about 50 mph.
 
-Equations corresponding to the bicycle model can be seen in `MPC.cpp` in the following lines within `FG_eval`:
+Equations corresponding to the global kinematic model can be seen in `MPC.cpp` in the following lines within `FG_eval`:
 
 ```c++
 // Model equations
