@@ -47,7 +47,6 @@ class FG_eval {
     // the Solver function below.
     fg[0] = 0;
 
-    // TODO: Tune cost function
     // The part of the cost based on the reference state.
     for (size_t t = 0; t < N; t++) {
       fg[0] += 10 * CppAD::pow(vars[cte_start + t], 2);
